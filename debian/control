@@ -1,0 +1,14 @@
+Source: gstatsd
+Section: python
+Priority: optional
+Maintainer: Patrick Hensley <spaceboy@indirect.com>
+Build-Depends: debhelper (>= 7)
+Build-Depends-Indep: python-support, python-setuptools
+Standards-Version: 3.8.3
+Homepage: http://github.com/phensley/gstatsd
+
+Package: gstatsd
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}, python-gevent
+Description: A statsd service implementation in Python + gevent.
+

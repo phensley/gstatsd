@@ -1,0 +1,5 @@
+gstatsd (0.2) lucid; urgency=low
+
+  * Initial release.
+
+ -- Patrick Hensley <spaceboy@indirect.com>  Tue, 28 Jun 2011 21:10:19 -0400
