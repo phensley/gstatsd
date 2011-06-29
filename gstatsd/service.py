@@ -29,8 +29,10 @@ A statsd service in Python + gevent.
 '''
 
 # table to remove invalid characters from keys
-KEY_VALIDCHARS = string.uppercase + string.lowercase + string.digits + '_-.'
-KEY_SANITIZE = string.maketrans(KEY_VALIDCHARS + '/', KEY_VALIDCHARS + '_')
+ALL_ASCII = set(chr(c) for c in range(256))
+KEY_VALID = string.ascii_letters + string.digits + '_-.'
+KEY_TABLE = string.maketrans(KEY_VALID + '/', KEY_VALID + '_')
+KEY_DELETIONS = ''.join(ALL_ASCII.difference(KEY_VALID + '/'))
 
 # error messages
 E_BADADDR = 'invalid bind address specified %r'
@@ -156,7 +158,7 @@ class StatsDaemon(object):
             self._error('packet: %r' % data)
         if not parts:
             return
-        key = parts[0].translate(KEY_SANITIZE, string.whitespace)
+        key = parts[0].translate(KEY_TABLE, KEY_DELETIONS)
         for part in parts[1:]:
             srate = 1.0
             fields = part.split('|')
@@ -246,11 +248,12 @@ def main():
     opts.add_option('-d', '--dest', dest='dest_addr', action='append',
         default=[],
         help="receiver [backend:]host:port (backend defaults to 'graphite')")
-    opts.add_option('-v', dest='verbose', action='count', default=0)
+    opts.add_option('-v', dest='verbose', action='count', default=0,
+        help="increase verbosity (currently used for debugging)")
     opts.add_option('-f', '--flush', dest='interval', default=INTERVAL,
-        help="flush interval, in seconds")
+        help="flush interval, in seconds (default 10)")
     opts.add_option('-p', '--percent', dest='percent', default=PERCENT,
-        help="percent threshold")
+        help="percent threshold (default 90)")
     opts.add_option('-l', '--list', dest='list_backends', action='store_true',
         help="list supported backends")
     opts.add_option('-D', '--daemonize', dest='daemonize', action='store_true',
