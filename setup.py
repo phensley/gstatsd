@@ -26,7 +26,7 @@ def main():
         classifiers = [
             "Development Status :: 2 - Pre-Alpha",
             "Intended Audience :: Developers",
-            "License :: OSI Approved :: Apache 2.0",
+            "License :: OSI Approved :: Apache Software License",
             "Operating System :: MacOS :: MacOS X",
             "Operating System :: POSIX :: Linux",
             "Operating System :: Unix",
