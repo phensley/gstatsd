@@ -29,31 +29,31 @@ Options:
 
     Options:
       --version             show program's version number and exit
-      -h, --help            show this help message and exit
       -b BIND_ADDR, --bind=BIND_ADDR
                             bind [host]:port (host defaults to '')
-      -d DEST_ADDR, --dest=DEST_ADDR
-                            receiver [backend:]host:port (backend defaults to
-                            'graphite')
+      -s SINK, --sink=SINK  a graphite service to which stats are sent
+                            ([host]:port).
       -v                    increase verbosity (currently used for debugging)
       -f INTERVAL, --flush=INTERVAL
                             flush interval, in seconds (default 10)
       -p PERCENT, --percent=PERCENT
                             percent threshold (default 90)
-      -l, --list            list supported backends
       -D, --daemonize       daemonize the service
+      -h, --help
 
-Start gstatsd and send stats to port 9100 every 5 seconds:
+Start gstatsd listening on the default port 8125, and send stats to graphite
+server on port 2003 every 5 seconds:
 
-    % gstatsd -d :9100 -f 5
+    % gstatsd -s 2003 -f 5
 
-Bind listener to host 'hostname' port 8126:
+Bind listener to host 'foo' port 8126, and send stats to the Graphite server
+on host 'bar' port 2003 every 20 seconds:
 
-    % gstatsd -b hostname:8126 -d :9100 -f 5
+    % gstatsd -b foo:8126 -s bar:2003 -f 20
 
-To send the stats to multiple graphite servers, specify multiple destinations:
+To send the stats to multiple graphite servers, specify '-s' multiple times:
 
-    % gstatsd -b :8125 -d stats1:9100 stats2:9100
+    % gstatsd -b :8125 -s stats1:2003 -s stats2:2004
 
 
 Using the client
