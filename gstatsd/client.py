@@ -81,7 +81,7 @@ class StatsTimer(object):
             raise UserWarning(E_NOSTART)
             return
         elapsed = time.time() - self._timestamp
-        self._client.timer(self._key, int(elapsed / 1000.0))
+        self._client.timer(self._key, int(elapsed * 1000.0))
         self._started = 0
 
 
