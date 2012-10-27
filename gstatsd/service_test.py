@@ -60,6 +60,13 @@ class StatsServiceTest(unittest.TestCase):
         self.svc._process(pkt, None)
         self.assertEquals(self.stats.counts, {'foo.bar': 1})
 
+    def test_key_prefix(self):
+        args = (':8125', [':2003'], 5, 90, 0, 'pfx')
+        svc = service.StatsDaemon(*args)
+        pkt = 'foo:1|c'
+        svc._process(pkt, None)
+        self.assertEquals(svc._stats.counts, {'pfx.foo': 1})
+
 
 def main():
     unittest.main()
