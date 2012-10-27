@@ -18,7 +18,9 @@ from core import __version__
 # vendor
 import gevent, gevent.socket
 socket = gevent.socket
-
+# protect stats  
+from gevent.thread import allocate_lock as Lock
+stats_lock = Lock()
 
 # constants
 INTERVAL = 10.0
@@ -130,9 +132,10 @@ class StatsDaemon(object):
         self._reset_stats()
 
     def _reset_stats(self):
-        self._stats = Stats()
-        self._stats.percent = self._percent
-        self._stats.interval = self._interval
+        with stats_lock:
+            self._stats = Stats()
+            self._stats.percent = self._percent
+            self._stats.interval = self._interval
 
     def exit(self, msg, code=1):
         self.error(msg)
@@ -201,20 +204,20 @@ class StatsDaemon(object):
             value = fields[0]
             stype = fields[1].strip()
 
-            # timer (milliseconds)
-            if stype == 'ms':
-                stats.timers[key].append(float(value if value else 0))
+            with stats_lock:
+                # timer (milliseconds)
+                if stype == 'ms':
+                    stats.timers[key].append(float(value if value else 0))
 
-            # counter with optional sample rate
-            elif stype == 'c':
-                if length == 3 and fields[2].startswith('@'):
-                    srate = float(fields[2][1:])
-                value = float(value if value else 1) * (1 / srate)
-                stats.counts[key] += value
-            elif stype == 'g':
-                value = float(value if value else 1)
-                stats.gauges[key] = value
-
+                # counter with optional sample rate
+                elif stype == 'c':
+                    if length == 3 and fields[2].startswith('@'):
+                        srate = float(fields[2][1:])
+                    value = float(value if value else 1) * (1 / srate)
+                    stats.counts[key] += value
+                elif stype == 'g':
+                    value = float(value if value else 1)
+                    stats.gauges[key] = value
 
 
 def main():
