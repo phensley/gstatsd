@@ -48,6 +48,7 @@ class Stats(object):
     def __init__(self):
         self.timers = defaultdict(list)
         self.counts = defaultdict(float)
+        self.gauges = defaultdict(float)
         self.percent = PERCENT
         self.interval = INTERVAL
 
@@ -163,7 +164,7 @@ class StatsDaemon(object):
         self._flush_task = gevent.spawn(_flush_impl)
 
         # start accepting connections
-        self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 
+        self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM,
             socket.IPPROTO_UDP)
         self._sock.bind(self._bindaddr)
         while 1:
@@ -206,12 +207,16 @@ class StatsDaemon(object):
                     srate = float(fields[2][1:])
                 value = float(value if value else 1) * (1 / srate)
                 stats.counts[key] += value
+            elif stype == 'g':
+                value = float(value if value else 1)
+                stats.gauges[key] = value
+
 
 
 def main():
     opts = optparse.OptionParser(description=DESCRIPTION, version=__version__,
         add_help_option=False)
-    opts.add_option('-b', '--bind', dest='bind_addr', default=':8125', 
+    opts.add_option('-b', '--bind', dest='bind_addr', default=':8125',
         help="bind [host]:port (host defaults to '')")
     opts.add_option('-s', '--sink', dest='sink', action='append', default=[],
         help="a graphite service to which stats are sent ([host]:port).")
@@ -239,8 +244,7 @@ def main():
     sd = StatsDaemon(options.bind_addr, options.sink, options.interval,
         options.percent, options.verbose)
     sd.start()
- 
+
 
 if __name__ == '__main__':
     main()
-

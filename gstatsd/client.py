@@ -20,9 +20,12 @@ class StatsClient(object):
             hostport = StatsClient.HOSTPORT
         self._hostport = hostport
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        
+
     def timer(self, key, timestamp, sample_rate=1):
         self._send('%s:%d|ms' % (key, round(timestamp)), sample_rate)
+
+    def gauge(self, key, value, sample_rate=1):
+        self._send('%s:%d|g' % (key, value), sample_rate)
 
     def increment(self, key, sample_rate=1):
         return self.counter(key, 1, sample_rate)
@@ -85,6 +88,17 @@ class StatsTimer(object):
         self._started = 0
 
 
+class StatsGauge(object):
+
+    def __init__(self, client, key, sample_rate=1):
+        self._client = client
+        self._key = key
+        self._sample_rate = sample_rate
+
+    def set(self, value):
+        self._client.gauge(self._key, value, self._sample_rate)
+
+
 class Stats(object):
 
     def __init__(self, client):
@@ -96,3 +110,5 @@ class Stats(object):
     def get_timer(self, key):
         return StatsTimer(self._client, key)
 
+    def get_gauge(self, key):
+        return StatsGauge(self._client, key)

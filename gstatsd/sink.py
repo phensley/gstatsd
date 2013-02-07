@@ -86,6 +86,13 @@ class GraphiteSink(Sink):
             buf.write('stats_counts.%s %f %d\n' % (key, val, now))
             num_stats += 1
 
+        # counter stats
+        gauges = stats.gauges
+        for key, val in gauges.iteritems():
+            buf.write('stats.%s %f %d\n' % (key, val, now))
+            buf.write('stats_counts.%s %f %d\n' % (key, val, now))
+            num_stats += 1
+
         buf.write('statsd.numStats %d %d\n' % (num_stats, now))
 
         # TODO: add support for N retries
@@ -99,4 +106,3 @@ class GraphiteSink(Sink):
                 sock.close()
             except Exception, ex:
                 self.error(E_SENDFAIL % ('graphite', host, ex))
-
