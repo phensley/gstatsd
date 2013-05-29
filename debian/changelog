@@ -1,3 +1,9 @@
+gstatsd (0.5) lucid; urgency=low
+
+  * Release.
+
+ -- Patrick Hensley <pat@clio>  Wed, 29 May 2013 12:44:32 -0400
+
 gstatsd (0.4) lucid; urgency=low
 
   * Release.
