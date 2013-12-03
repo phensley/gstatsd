@@ -9,6 +9,10 @@ import time
 E_NOSTART = 'you must call start() before stop(). ignoring.'
 
 
+def _format_float(val):
+    return ('%f' % val).rstrip('0').rstrip('.')
+
+
 class StatsClient(object):
 
     "Simple client to exercise the statsd server."
@@ -25,7 +29,7 @@ class StatsClient(object):
         self._send('%s:%d|ms' % (key, round(timestamp)), sample_rate)
 
     def gauge(self, key, value, sample_rate=1):
-        self._send('%s:%d|g' % (key, value), sample_rate)
+        self._send('%s:%s|g' % (key, _format_float(value)), sample_rate)
 
     def increment(self, key, sample_rate=1):
         return self.counter(key, 1, sample_rate)

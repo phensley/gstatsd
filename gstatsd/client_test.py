@@ -56,9 +56,9 @@ class StatsClientTest(unittest.TestCase):
     def test_gauge(self):
         self._cli.gauge('foo', 5)
         self.assertEquals(self._cli.packets[-1], ('foo:5|g', 1))
-        self._cli.counter('foo', -50)
+        self._cli.gauge('foo', -50)
         self.assertEquals(self._cli.packets[-1], ('foo:-50|g', 1))
-        self._cli.counter('foo', 5.9)
+        self._cli.gauge('foo', 5.9)
         self.assertEquals(self._cli.packets[-1], ('foo:5.9|g', 1))
 
 
