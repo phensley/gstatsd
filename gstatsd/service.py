@@ -174,7 +174,10 @@ class StatsDaemon(object):
         self._sock.bind(self._bindaddr)
         while 1:
             try:
-                self._process(*self._sock.recvfrom(MAX_PACKET))
+                data, _ = self._sock.recvfrom(MAX_PACKET)
+                for p in data.split('\n'):
+                    if p:
+                        self._process(p)
             except Exception, ex:
                 self.error(str(ex))
 
@@ -182,7 +185,7 @@ class StatsDaemon(object):
         "Shutdown the server"
         self.exit("service exiting", code=0)
 
-    def _process(self, data, _):
+    def _process(self, data):
         "Process a single packet and update the internal tables."
         parts = data.split(':')
         if self._debug:

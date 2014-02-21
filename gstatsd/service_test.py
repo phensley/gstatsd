@@ -34,37 +34,37 @@ class StatsServiceTest(unittest.TestCase):
 
     def test_counters(self):
         pkt = 'foo:1|c'
-        self.svc._process(pkt, None)
+        self.svc._process(pkt)
         self.assertEquals(self.stats.counts, {'foo': 1})
-        self.svc._process(pkt, None)
+        self.svc._process(pkt)
         self.assertEquals(self.stats.counts, {'foo': 2})
         pkt = 'foo:-1|c'
-        self.svc._process(pkt, None)
+        self.svc._process(pkt)
         self.assertEquals(self.stats.counts, {'foo': 1})
 
     def test_counters_sampled(self):
         pkt = 'foo:1|c|@.5'
-        self.svc._process(pkt, None)
+        self.svc._process(pkt)
         self.assertEquals(self.stats.counts, {'foo': 2})
 
     def test_timers(self):
         pkt = 'foo:20|ms'
-        self.svc._process(pkt, None)
+        self.svc._process(pkt)
         self.assertEquals(self.stats.timers, {'foo': [20.0]})
         pkt = 'foo:10|ms'
-        self.svc._process(pkt, None)
+        self.svc._process(pkt)
         self.assertEquals(self.stats.timers, {'foo': [20.0, 10.0]})
 
     def test_key_sanitize(self):
         pkt = '\t\n#! foo . bar \0 ^:1|c'
-        self.svc._process(pkt, None)
+        self.svc._process(pkt)
         self.assertEquals(self.stats.counts, {'foo.bar': 1})
 
     def test_key_prefix(self):
         args = (':8125', [':2003'], 5, 90, 0, 'pfx')
         svc = service.StatsDaemon(*args)
         pkt = 'foo:1|c'
-        svc._process(pkt, None)
+        svc._process(pkt)
         self.assertEquals(svc._stats.counts, {'pfx.foo': 1})
 
 
