@@ -100,8 +100,7 @@ class GraphiteSink(Sink):
         for host in self._hosts:
             # flush stats to graphite
             try:
-                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                sock.connect(host)
+                sock = socket.create_connection(host)
                 sock.sendall(buf.getvalue())
                 sock.close()
             except Exception, ex:
